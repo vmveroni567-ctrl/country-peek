@@ -17,7 +17,7 @@ function useCountry(code) {
         return res.json();
       })
       .then((data) => {
-        setCountry(data[0]); // ✅ IMPORTANT
+        setCountry(data[0]); // IMPORTANT
       })
       .catch((err) => {
         setCountry(null);

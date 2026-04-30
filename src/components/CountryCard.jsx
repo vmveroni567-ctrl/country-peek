@@ -1,46 +1,46 @@
-import { Link } from 'react-router-dom'
-import { useFavourites } from '../context/FavouritesContext'
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function CountryCard({ country }) {
-  const { cca3, name, flags, population, region, capital } = country
+  const { name, flags, cca3 } = country;
 
-  // 2. get favourites + dispatch
-  const { favourites, dispatch } = useFavourites()
+  const [saved, setSaved] = useState(false);
 
-  // 3. check if already saved
-  const isSaved = favourites.some((f) => f.cca3 === cca3)
+  useEffect(() => {
+    const favs = JSON.parse(localStorage.getItem("favs")) || [];
+    setSaved(favs.includes(cca3));
+  }, [cca3]);
 
-  function handleFavClick(e) {
-    e.stopPropagation() // prevent navigation
-    e.preventDefault()  // extra safety for Link
+  const toggleFav = () => {
+    let favs = JSON.parse(localStorage.getItem("favs")) || [];
 
-    if (isSaved) {
-      dispatch({ type: 'REMOVE_FAVOURITE', payload: cca3 })
+    if (favs.includes(cca3)) {
+      favs = favs.filter(f => f !== cca3);
     } else {
-      dispatch({ type: 'ADD_FAVOURITE', payload: country })
+      favs.push(cca3);
     }
-  }
+
+    localStorage.setItem("favs", JSON.stringify(favs));
+    setSaved(!saved);
+  };
 
   return (
-    <Link to={`/country/${cca3}`} className="card">
-      <img src={flags.png} alt={name.common} className="card__flag" />
+    <div className="card">
+      <img src={flags.svg} alt={`Flag of ${name.common}`} />
 
-      <div className="card__body">
-        <h3>{name.common}</h3>
-        <p>Population: {population.toLocaleString()}</p>
-        <p>Region: {region}</p>
-        <p>Capital: {capital?.[0]}</p>
+      <h3 className="card__name">{name.common}</h3>
 
-        {/* 4. Favourite button */}
-        <button
-          className={`fav-btn ${isSaved ? 'fav-btn--saved' : ''}`}
-          onClick={handleFavClick}
-        >
-          {isSaved ? '♥ Saved' : '♡ Save'}
-        </button>
-      </div>
-    </Link>
-  )
+      <Link to={`/country/${cca3}`}>View</Link>
+
+      <button
+        aria-label={saved ? "Remove from favourites" : "Save to favourites"}
+        aria-pressed={saved}
+        onClick={toggleFav}
+      >
+        {saved ? "♥ Saved" : "♡ Save"}
+      </button>
+    </div>
+  );
 }
 
-export default CountryCard
+export default CountryCard;

@@ -1,29 +1,30 @@
-import { Link } from 'react-router-dom'
-import { useFavourites } from '../context/FavouritesContext'
-import CountryCard from '../components/CountryCard'
+import { useEffect, useState } from "react";
+import CountryCard from "../components/CountryCard";
 
 function Favourites() {
-  // 1. get favourites
-  const { favourites } = useFavourites()
+  const [countries, setCountries] = useState([]);
 
-  // 2. empty state
-  if (favourites.length === 0) {
-    return (
-      <div className="empty-state">
-        <p>You have not saved any countries yet.</p>
-        <Link to="/">Go explore countries →</Link>
-      </div>
-    )
-  }
+  useEffect(() => {
+    const favs = JSON.parse(localStorage.getItem("favs")) || [];
 
-  // 3. render favourites
+    Promise.all(
+      favs.map(code =>
+        fetch(`https://restcountries.com/v3.1/alpha/${code}`)
+          .then(res => res.json())
+          .then(data => data[0])
+      )
+    ).then(setCountries);
+  }, []);
+
   return (
     <div className="cards-grid">
-      {favourites.map((country) => (
-        <CountryCard key={country.cca3} country={country} />
-      ))}
+      {countries.length === 0 ? (
+        <p>No favourites yet</p>
+      ) : (
+        countries.map(c => <CountryCard key={c.cca3} country={c} />)
+      )}
     </div>
-  )
+  );
 }
 
-export default Favourites
+export default Favourites;

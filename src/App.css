@@ -1,28 +1,34 @@
-/* Base button */
-.fav-btn {
-  margin-top: 0.5rem;
-
-  /* reset default button styles */
-  background: none;
-  border: none;
-
-  cursor: pointer;
-  font-size: 0.85rem;
-  padding: 0.3rem 0.5rem;
-
-  color: var(--text);
-  opacity: 0.7;
-
-  transition: all 0.2s ease;
+body {
+  margin: 0;
+  font-family: sans-serif;
 }
 
-/* hover effect */
-.fav-btn:hover {
-  opacity: 1;
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
 }
 
-/* Saved state */
-.fav-btn--saved {
-  color: #e63946; /* red tone */
-  opacity: 1;
+.cards-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.card {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.card__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+  }
 }
